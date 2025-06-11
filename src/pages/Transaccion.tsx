@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import TransactionForm from '../Components/TransaccionForm';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const TransaccionPage: React.FC = () => {
     const [categorias, setCategorias ] = useState<any[]>([]);
     const [ cuentas, setCuentas ] = useState<any[]>([]);
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<string | null>(null);
-    const { usuario } = useAuth();
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
+
+        if (!user) {
+            navigate('/src/pages/Login.tsx');
+            return;
+        }
+
         const fetchData = async() => {
             try {
                 const categoriesResponse = await fetch('http://localhost:8000/categorias');
@@ -18,7 +26,7 @@ const TransaccionPage: React.FC = () => {
                 if (!categoriesResponse.ok) {
                     throw new Error("Error al obtener categoria");
                 }
-                const cuentasResponse = await fetch('')
+                const cuentasResponse = await fetch('http://localhost:8000/cuenta')
                 const categoriasData = await categoriesResponse.json();
 
                 if (!cuentasResponse.ok) {
@@ -34,16 +42,16 @@ const TransaccionPage: React.FC = () => {
             }
         };
         fetchData();
-    }, [usuario.idUsuario]);
+    }, [user.idUsuario]);
 
     const handleSubmit = async (transaccionData: any) => {
         try {
             
-            const response = await fetch('http://localhost:8000/transacciones', {
+            const response = await fetch('http://localhost:8000/transaccion', {
                 method: 'POST',
                 headers: {
                     'Content-Type':'application/json',
-                    'Authorization':`Baerer ${localStorage.getItem('token')}`
+                    'Authorization':`Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
                     ...transaccionData,
@@ -86,9 +94,9 @@ const TransaccionPage: React.FC = () => {
             </Typography>
             <TransactionForm 
                 onSubmit={handleSubmit} 
-                categories={categorias} 
-                accounts={cuentas}
-                userId={usuario.idUsuario}
+                categorias={categorias} 
+                cuentas={cuentas}
+                idUsuario={user.idUsuario}
             />
         </Box>        
     );

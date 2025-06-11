@@ -47,30 +47,34 @@ function App() {
 
   return (
     <div className="app">
-      <Router>
-        <Routes>
-          <Route 
-            path='/login' 
-            element={isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={updateAuth} />} 
-          />
-          <Route 
-            path='/' 
-            element={isAuthenticated ? <Home onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path='/categorias' 
-            element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path='*' 
-            element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
-          />
-          <Route 
-            path='/Transaccion' 
-            element={<TransaccionPage />} 
-          />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route 
+          path='/login' 
+          element={isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={updateAuth} />} 
+        />
+        <Route 
+          path='/' 
+          element={isAuthenticated ? <Home onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path='/categorias' 
+          element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path='/transaccion' 
+          element={<TransaccionPage />} 
+        />
+        <Route 
+          path='*' 
+          element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
+        />
+        <Route 
+          path='*' 
+          element={
+            <Navigate to={isAuthenticated ? "/" : "/login"} replace />
+          } 
+        />
+      </Routes>
     </div>
   );
 }
