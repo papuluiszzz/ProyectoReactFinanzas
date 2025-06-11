@@ -15,7 +15,7 @@ const TransaccionPage: React.FC = () => {
     useEffect(() => {
 
         if (!user) {
-            navigate('/src/pages/Login.tsx');
+            navigate('/login');
             return;
         }
 
@@ -42,7 +42,7 @@ const TransaccionPage: React.FC = () => {
             }
         };
         fetchData();
-    }, [user.idUsuario]);
+    }, [user.UserId]);
 
     const handleSubmit = async (transaccionData: any) => {
         try {
@@ -55,6 +55,7 @@ const TransaccionPage: React.FC = () => {
                 },
                 body: JSON.stringify({
                     ...transaccionData,
+                    idUsuario: user.idUsuario,
                     fecha: transaccionData.fecha.toISOString().split('T')[0]
                 })
             });
@@ -96,7 +97,7 @@ const TransaccionPage: React.FC = () => {
                 onSubmit={handleSubmit} 
                 categorias={categorias} 
                 cuentas={cuentas}
-                idUsuario={user.idUsuario}
+                idUsuario={user.UserId}
             />
         </Box>        
     );

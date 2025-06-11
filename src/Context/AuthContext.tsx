@@ -12,7 +12,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('usuario');
+        const storedUser = localStorage.getItem('UserId');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
@@ -20,13 +20,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const login = (userData: any, token: string) => {
         localStorage.setItem('token', token);
-        localStorage.setItem('usuario', JSON.stringify(userData));
+        localStorage.setItem('UserId', JSON.stringify(userData));
         setUser(userData);
     };
 
     const logout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('usuario');    
+        localStorage.removeItem('UserId');    
         setUser(null);    
     };
 
