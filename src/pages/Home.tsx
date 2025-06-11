@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -14,8 +13,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import SavingsIcon from '@mui/icons-material/Savings';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { useNavigate } from 'react-router-dom';
 import CategoryIcon from '@mui/icons-material/Category';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     onLogout: () => void;
@@ -26,7 +25,6 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
     const [loading, setLoading] = useState(true);
     const [tokenValid, setTokenValid] = useState(false);
     const [userName, setUserName] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         const validateSession = async () => {
@@ -465,10 +463,6 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                     </Box>
                                 </Grid>
                                 
-                                <Grid item xs={12} sm={6} md={4}>
-                                    <Box 
-                                    onClick={()=>navigate('/Transaccion')}
-                                    sx={{ 
                                 <Grid item xs={12} sm={6} md={3}>
                                     <Box sx={{ 
                                         p: 3, 
