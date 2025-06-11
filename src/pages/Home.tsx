@@ -464,7 +464,9 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                 </Grid>
                                 
                                 <Grid item xs={12} sm={6} md={3}>
-                                    <Box sx={{ 
+                                    <Box 
+                                    onClick={() => navigate('/Transaccion')}
+                                    sx={{ 
                                         p: 3, 
                                         borderRadius: 2, 
                                         backgroundColor: '#f9fafb',

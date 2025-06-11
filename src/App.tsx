@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import Categorias from './Pages/Categorias';
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
+import TransaccionPage from './pages/Transaccion';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = cargando
@@ -63,26 +64,34 @@ function App() {
 
   return (
     <div className="app">
-      <Router>
-        <Routes>
-          <Route 
-            path='/login' 
-            element={isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={updateAuth} />} 
-          />
-          <Route 
-            path='/' 
-            element={isAuthenticated ? <Home onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path='/categorias' 
-            element={isAuthenticated ? <Categorias onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path='*' 
-            element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
-          />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route 
+          path='/login' 
+          element={isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={updateAuth} />} 
+        />
+        <Route 
+          path='/' 
+          element={isAuthenticated ? <Home onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path='/categorias' 
+          element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path='/transaccion' 
+          element={<TransaccionPage />} 
+        />
+        <Route 
+          path='*' 
+          element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
+        />
+        <Route 
+          path='*' 
+          element={
+            <Navigate to={isAuthenticated ? "/" : "/login"} replace />
+          } 
+        />
+      </Routes>
     </div>
   );
 }
