@@ -14,13 +14,13 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import esLocale from 'date-fns/locale/es';
+import type esLocale from 'date-fns/locale/es';
 
 interface TransaccionFormProps {
     onSubmit: (transaccionData: any) => void;
     categorias: any[];
     cuentas: any[];
-    idUsuario: any[];
+    idUsuario: number;
 }
 
 const TransaccionForm: React.FC<TransaccionFormProps> = ({
@@ -45,7 +45,9 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmit({
+            ...formData,
+            idUsuario: idUsuario});
     };
 
     return (
