@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Login from './Pages/Login';
-import Home from './Pages/Home';
-import Categorias from './Pages/Categorias';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import Categorias from './pages/Categorias';
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 

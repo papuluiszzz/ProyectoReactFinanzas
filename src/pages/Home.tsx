@@ -506,7 +506,7 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                             Gestionar Categorías
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                                            Organiza tus ingresos y gastos
+                                            Organiza tus categorias 
                                         </Typography>
                                     </Box>
                                 </Grid>
