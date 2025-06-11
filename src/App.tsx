@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState, useEffect } from 'react';
 import Login from './Pages/Login';
 import Home from './Pages/Home';
+import TransaccionPage from "./pages/Transaccion";
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 
@@ -58,6 +59,10 @@ function App() {
           <Route 
             path='*' 
             element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
+          />
+          <Route 
+            path='/Transaccion' 
+            element={<TransaccionPage />} 
           />
         </Routes>
       </Router>
