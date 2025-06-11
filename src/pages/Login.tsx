@@ -64,11 +64,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             console.log('Datos recibidos:', data);
 
             if (response.ok && data.success) {
-                // Guardar en localStorage
+                // ✅ ACTUALIZADO: Guardar más información del usuario
                 localStorage.setItem('token', data.accessToken);
                 localStorage.setItem('userName', data.data);
+                localStorage.setItem('userId', data.userId.toString()); // ✅ NUEVO: ID del usuario
                 
-                console.log('Login exitoso, actualizando estado...');
+                // ✅ OPCIONAL: Guardar información completa del usuario
+                if (data.userInfo) {
+                    localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+                }
+                
+                console.log('Login exitoso, datos guardados:');
+                console.log('- Token:', data.accessToken ? 'Guardado' : 'No recibido');
+                console.log('- UserName:', data.data);
+                console.log('- UserId:', data.userId);
                 
                 // Notificar al App que hubo login exitoso
                 onLogin();

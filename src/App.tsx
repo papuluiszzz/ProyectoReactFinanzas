@@ -1,20 +1,26 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Login from './pages/Login';
-import Home from './pages/Home';
-import Categorias from './pages/Categorias';
-import TransaccionPage from "./pages/Transaccion";
+import Login from './Pages/Login';
+import Home from './Pages/Home';
+import Categorias from './Pages/Categorias';
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = cargando
   
-  // Función para verificar autenticación
+  // ✅ ACTUALIZADO: Función para verificar autenticación incluyendo userId
   const checkAuth = () => {
     const token = localStorage.getItem('token');
     const userName = localStorage.getItem('userName');
-    return !!(token && userName);
+    const userId = localStorage.getItem('userId'); // ✅ NUEVO: Verificar userId
+    
+    console.log('Verificando autenticación:');
+    console.log('- Token:', token ? 'Presente' : 'Ausente');
+    console.log('- UserName:', userName || 'Ausente');
+    console.log('- UserId:', userId || 'Ausente');
+    
+    return !!(token && userName && userId); // ✅ ACTUALIZADO: Requiere los 3 valores
   };
 
   // Verificar autenticación al cargar la app
@@ -22,9 +28,19 @@ function App() {
     setIsAuthenticated(checkAuth());
   }, []);
 
-  // Función para actualizar el estado de autenticación (la pasaremos a los componentes)
+  // ✅ ACTUALIZADO: Función para limpiar TODOS los datos del usuario
   const updateAuth = () => {
     setIsAuthenticated(checkAuth());
+  };
+
+  // ✅ NUEVO: Función para logout completo
+  const handleLogout = () => {
+    console.log('Cerrando sesión y limpiando datos...');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userInfo'); // Por si guardaste info adicional
+    setIsAuthenticated(false);
   };
 
   // Mostrar loading mientras verifica
@@ -55,19 +71,15 @@ function App() {
           />
           <Route 
             path='/' 
-            element={isAuthenticated ? <Home onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+            element={isAuthenticated ? <Home onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
           />
           <Route 
             path='/categorias' 
-            element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+            element={isAuthenticated ? <Categorias onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
           />
           <Route 
             path='*' 
             element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
-          />
-          <Route 
-            path='/Transaccion' 
-            element={<TransaccionPage />} 
           />
         </Routes>
       </Router>
