@@ -123,7 +123,8 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                     boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}
+                     onClick={() => navigate('/')}>
                     <AccountBalanceWalletIcon sx={{ fontSize: 32, color: '#6366f1' }} />
                     <Typography variant="h6" fontWeight="700" sx={{ color: '#111827' }}>
                         Finanzas Pro
