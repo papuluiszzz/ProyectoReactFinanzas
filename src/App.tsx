@@ -1,8 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import Login from './Pages/Login';
 import Home from './Pages/Home';
 import TransaccionPage from "./pages/Transaccion";
+=======
+import Login from './pages/Login';
+import Home from './pages/Home';
+import Categorias from './pages/Categorias';
+>>>>>>> c2dd6c6a9a47b372e9098a66c391ffae83ba3319
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 
@@ -39,7 +45,7 @@ function App() {
           backgroundColor: '#ffffff',
         }}
       >
-        <CircularProgress size={60} sx={{ color: 'white' }} />
+        <CircularProgress size={60} sx={{ color: '#6366f1' }} />
       </Box>
     );
   }
@@ -55,6 +61,10 @@ function App() {
           <Route 
             path='/' 
             element={isAuthenticated ? <Home onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path='/categorias' 
+            element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
           />
           <Route 
             path='*' 

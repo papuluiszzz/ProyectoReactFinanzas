@@ -15,7 +15,6 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import SavingsIcon from '@mui/icons-material/Savings';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import CategoryIcon from '@mui/icons-material/Category';
-import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     onLogout: () => void;
@@ -26,7 +25,6 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
     const [loading, setLoading] = useState(true);
     const [tokenValid, setTokenValid] = useState(false);
     const [userName, setUserName] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         const validateSession = async () => {
@@ -103,8 +101,6 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
         );
     }
 
-    
-
     return (
         <Box
             sx={{
@@ -127,7 +123,8 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                     boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}
+                     onClick={() => navigate('/')}>
                     <AccountBalanceWalletIcon sx={{ fontSize: 32, color: '#6366f1' }} />
                     <Typography variant="h6" fontWeight="700" sx={{ color: '#111827' }}>
                         Finanzas Pro
