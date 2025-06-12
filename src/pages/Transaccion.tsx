@@ -7,14 +7,13 @@ import { useNavigate } from 'react-router-dom';
 const TransaccionPage: React.FC = () => {
     const [categorias, setCategorias ] = useState<any[]>([]);
     const [ cuentas, setCuentas ] = useState<any[]>([]);
-    const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<string | null>(null);
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
 
-        if (!user) {
+        if (!loading && !user) {
             navigate('/login');
             return;
         }
@@ -35,14 +34,12 @@ const TransaccionPage: React.FC = () => {
                 const cuentasData = await cuentasResponse.json();
                     setCategorias(categoriasData);
                     setCuentas(cuentasData);
-                    setLoading(false);
             } catch (error) {
                 setError(error instanceof Error ? error.message:"Ocurrió un error.")
-                setLoading(false);
             }
         };
         fetchData();
-    }, [user.UserId]);
+    }, [user?.idUsuario, loading, navigate]);
 
     const handleSubmit = async (transaccionData: any) => {
         try {
@@ -55,7 +52,7 @@ const TransaccionPage: React.FC = () => {
                 },
                 body: JSON.stringify({
                     ...transaccionData,
-                    idUsuario: user.idUsuario,
+                    idUsuario: user?.idUsuario,
                     fecha: transaccionData.fecha.toISOString().split('T')[0]
                 })
             });
@@ -97,7 +94,7 @@ const TransaccionPage: React.FC = () => {
                 onSubmit={handleSubmit} 
                 categorias={categorias} 
                 cuentas={cuentas}
-                idUsuario={user.UserId}
+                idUsuario={user?.idUsuario}
             />
         </Box>        
     );
