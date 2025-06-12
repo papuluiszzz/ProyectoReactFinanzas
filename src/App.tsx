@@ -85,12 +85,6 @@ function App() {
           path='*' 
           element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
         />
-        <Route 
-          path='*' 
-          element={
-            <Navigate to={isAuthenticated ? "/" : "/login"} replace />
-          } 
-        />
       </Routes>
     </div>
   );
