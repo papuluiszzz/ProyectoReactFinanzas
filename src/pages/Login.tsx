@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { useAuth } from '../Context/AuthContext'; // Importar el contexto
 
 interface LoginProps {
     onLogin: () => void; // Callback para notificar al App del login exitoso
@@ -18,6 +19,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const navigate = useNavigate();
+    const { login } = useAuth(); // Usar el contexto
     
     const [formData, setFormData] = useState({
         email: '',
@@ -64,21 +66,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             console.log('Datos recibidos:', data);
 
             if (response.ok && data.success) {
-                // ✅ ACTUALIZADO: Guardar más información del usuario
-                localStorage.setItem('token', data.accessToken);
-                localStorage.setItem('userName', data.data);
-                localStorage.setItem('userId', data.userId.toString()); // ✅ NUEVO: ID del usuario
+                // ✅ ACTUALIZADO: Crear objeto User según la interfaz del contexto
+                const userData = {
+                    idUsuario: data.userId,
+                    nombre: data.data, // Asumiendo que data.data contiene el nombre
+                    apellido: data.userInfo?.apellido || '', // Si viene en userInfo
+                    email: formData.email // Usar el email del formulario
+                };
+
+                // ✅ Usar el contexto para hacer login
+                login(userData, data.accessToken);
                 
-                // ✅ OPCIONAL: Guardar información completa del usuario
-                if (data.userInfo) {
-                    localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
-                }
-                
-                console.log('Login exitoso, datos guardados:');
+                console.log('Login exitoso, datos guardados en contexto:');
+                console.log('- UserData:', userData);
                 console.log('- Token:', data.accessToken ? 'Guardado' : 'No recibido');
-                console.log('- UserName:', data.data);
-                console.log('- UserId:', data.userId);
-                
+                  localStorage.setItem('token', data.accessToken);
+  localStorage.setItem('userName', userData.nombre);
+  localStorage.setItem('userId', userData.idUsuario.toString());
                 // Notificar al App que hubo login exitoso
                 onLogin();
                 
