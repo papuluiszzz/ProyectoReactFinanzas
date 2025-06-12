@@ -9,6 +9,7 @@ import { useAuth } from '../Context/AuthContext';
 const TransaccionPage: React.FC = () => {
     const [categorias, setCategorias] = useState<any[]>([]);
     const [cuentas, setCuentas] = useState<any[]>([]);
+    const [tiposTransaccion, setTiposTransaccion] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
     const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const TransaccionPage: React.FC = () => {
                 const categoriasData = await categoriesResponse.json();
 
                 // Fetch cuentas
-                const cuentasResponse = await fetch('http://localhost:8000/cuenta', {
+                const cuentasResponse = await fetch(`http://localhost:8000/cuenta?userId=${user.idUsuario}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -48,9 +49,17 @@ const TransaccionPage: React.FC = () => {
                 }
                 const cuentasData = await cuentasResponse.json();
 
-                // Actualizar estados
-                setCategorias(categoriasData);
-                setCuentas(cuentasData);
+                // Fetch tipos de transacción
+                const tiposResponse = await fetch('http://localhost:8000/tipos-transaccion');
+                if (!tiposResponse.ok) {
+                    throw new Error("Error al obtener tipos de transacción");
+                }
+                const tiposData = await tiposResponse.json();
+
+                // Actualizar estados - CORREGIR extracción de arrays
+                setCategorias(categoriasData.success ? categoriasData.data : []);
+                setCuentas(cuentasData.success ? cuentasData.data : []);
+                setTiposTransaccion(tiposData.success ? tiposData.data : []);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -299,6 +308,7 @@ const TransaccionPage: React.FC = () => {
                     onSubmit={handleSubmit} 
                     categorias={categorias || []} 
                     cuentas={cuentas || []}
+                    tiposTransaccion={tiposTransaccion || []}
                     idUsuario={user.idUsuario}
                 />
             </Box>

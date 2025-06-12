@@ -28,10 +28,16 @@ interface Cuenta {
     tipo: string;
 }
 
+interface TipoTransaccion {
+    idTipoTransaccion: number | string;
+    descripcion: string;
+}
+
 interface TransaccionFormProps {
     onSubmit: (transaccionData: any) => void;
     categorias: Categoria[];
     cuentas: Cuenta[];
+    tiposTransaccion: TipoTransaccion[];
     idUsuario: number;
 }
 
@@ -39,13 +45,16 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
     onSubmit,
     categorias = [],
     cuentas = [],
+    tiposTransaccion = [],
     idUsuario
 }) => {
     // Debug - ver qué llega
     console.log('Categorias recibidas:', categorias);
     console.log('Cuentas recibidas:', cuentas);
+    console.log('Tipos transacción recibidos:', tiposTransaccion);
     console.log('Es categorias un array?', Array.isArray(categorias));
     console.log('Es cuentas un array?', Array.isArray(cuentas));
+    console.log('Es tiposTransaccion un array?', Array.isArray(tiposTransaccion));
 
     const [formData, setFormData] = useState({
         monto: '',
@@ -53,6 +62,7 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
         descripcion: '',
         idCategoria: '',
         idCuenta: '',
+        idTipoTransaccion: '',
         idUsuario: idUsuario
     });
 
@@ -76,6 +86,7 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
             descripcion: '',
             idCategoria: '',
             idCuenta: '',
+            idTipoTransaccion: '',
             idUsuario: idUsuario
         });
     };
@@ -122,7 +133,68 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                             required
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
+                        <FormControl fullWidth>
+                            <InputLabel id="tipo-transaccion-label">Tipo de Transacción</InputLabel>
+                            <Select
+                                labelId="tipo-transaccion-label"
+                                label="Tipo de Transacción"
+                                name="idTipoTransaccion"
+                                value={formData.idTipoTransaccion}
+                                onChange={(e) => setFormData(prev => ({ ...prev, idTipoTransaccion: e.target.value }))}
+                                required
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 300,
+                                            minWidth: 200,
+                                        },
+                                    },
+                                    anchorOrigin: {
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    },
+                                    transformOrigin: {
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    },
+                                }}
+                            >
+                                {(() => {
+                                    let tiposArray = [];
+                                    
+                                    if (Array.isArray(tiposTransaccion)) {
+                                        tiposArray = tiposTransaccion;
+                                    } else if (tiposTransaccion && tiposTransaccion.data && Array.isArray(tiposTransaccion.data)) {
+                                        tiposArray = tiposTransaccion.data;
+                                    } else if (tiposTransaccion && tiposTransaccion.success && Array.isArray(tiposTransaccion.data)) {
+                                        tiposArray = tiposTransaccion.data;
+                                    } else {
+                                        console.log('TiposTransaccion estructura:', tiposTransaccion);
+                                        tiposArray = [];
+                                    }
+                                    
+                                    return tiposArray.map((tipo) => (
+                                        <MenuItem 
+                                            key={tipo.idTipoTransaccion} 
+                                            value={tipo.idTipoTransaccion}
+                                            sx={{
+                                                minHeight: 48,
+                                                padding: '12px 16px',
+                                                fontSize: '1rem',
+                                                '&:hover': {
+                                                    backgroundColor: '#f5f5f5',
+                                                }
+                                            }}
+                                        >
+                                            {tipo.descripcion}
+                                        </MenuItem>
+                                    ));
+                                })()}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
                         <FormControl fullWidth>
                             <InputLabel id="categoria-label">Categoría</InputLabel>
                             <Select
@@ -150,15 +222,17 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                                 }}
                             >
                                 {(() => {
-                                    // Intentar diferentes estructuras de datos
                                     let categoriasArray = [];
                                     
                                     if (Array.isArray(categorias)) {
                                         categoriasArray = categorias;
                                     } else if (categorias && categorias.data && Array.isArray(categorias.data)) {
                                         categoriasArray = categorias.data;
-                                    } else if (categorias && typeof categorias === 'object') {
-                                        console.log('Categorias no es array, estructura:', categorias);
+                                    } else if (categorias && categorias.success && Array.isArray(categorias.data)) {
+                                        categoriasArray = categorias.data;
+                                    } else {
+                                        console.log('Categorias estructura:', categorias);
+                                        categoriasArray = [];
                                     }
                                     
                                     return categoriasArray.map((categoria) => (
@@ -181,7 +255,7 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <FormControl fullWidth>
                             <InputLabel id="cuenta-label">Cuenta</InputLabel>
                             <Select
@@ -209,20 +283,22 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                                 }}
                             >
                                 {(() => {
-                                    // Intentar diferentes estructuras de datos
                                     let cuentasArray = [];
                                     
                                     if (Array.isArray(cuentas)) {
                                         cuentasArray = cuentas;
                                     } else if (cuentas && cuentas.data && Array.isArray(cuentas.data)) {
                                         cuentasArray = cuentas.data;
-                                    } else if (cuentas && typeof cuentas === 'object') {
-                                        console.log('Cuentas no es array, estructura:', cuentas);
+                                    } else if (cuentas && cuentas.success && Array.isArray(cuentas.data)) {
+                                        cuentasArray = cuentas.data;
+                                    } else {
+                                        console.log('Cuentas estructura:', cuentas);
+                                        cuentasArray = [];
                                     }
                                     
                                     return cuentasArray.map((cuenta) => (
                                         <MenuItem key={cuenta.idCuenta} value={cuenta.idCuenta}>
-                                            {cuenta.nombre} ({cuenta.tipo})
+                                            {cuenta.nombre} ({cuenta.tipoCuenta})
                                         </MenuItem>
                                     ));
                                 })()}
