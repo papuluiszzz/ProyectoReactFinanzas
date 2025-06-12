@@ -14,44 +14,56 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import type esLocale from 'date-fns/locale/es';
+import { es } from 'date-fns/locale/es';
+
+interface Categoria {
+    idCategoria: number | string;
+    nombre: string;
+}
+
+interface Cuenta {
+    idCuenta: number | string;
+    nombre: string;
+    tipo: string;
+}
 
 interface TransaccionFormProps {
     onSubmit: (transaccionData: any) => void;
-    categorias: any[];
-    cuentas: any[];
+    categorias: Categoria[];
+    cuentas: Cuenta[];
     idUsuario: number;
 }
 
 const TransaccionForm: React.FC<TransaccionFormProps> = ({
     onSubmit,
-    categorias,
-    cuentas,
+    categorias = [],
+    cuentas = [],
     idUsuario
 }) => {
     const [formData, setFormData] = useState({
-        monto:'',
+        monto: '',
         fecha: new Date(),
-        descripcion:'',
-        idCategoria:'',
-        idCuenta:'',
+        descripcion: '',
+        idCategoria: '',
+        idCuenta: '',
         idUsuario: idUsuario
     });
 
-    const handleChange = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(formData);
-    }
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({
-            ...formData,
-            idUsuario: idUsuario});
+        onSubmit(formData);
     };
 
     return (
-                <Paper elevation={3} sx={{ p: 3 }}>
+        <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
                 Nueva Transacción
             </Typography>
@@ -69,7 +81,7 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
                             <DatePicker
                                 label="Fecha"
                                 value={formData.fecha}
@@ -122,9 +134,9 @@ const TransaccionForm: React.FC<TransaccionFormProps> = ({
                                 onChange={(e) => setFormData(prev => ({ ...prev, idCuenta: e.target.value }))}
                                 required
                             >
-                                {cuentas.map((cuentas) => (
-                                    <MenuItem key={cuentas.idCuenta} value={cuentas.idCuenta}>
-                                        {cuentas.nombre} ({cuentas.tipo})
+                                {cuentas.map((cuenta) => (
+                                    <MenuItem key={cuenta.idCuenta} value={cuenta.idCuenta}>
+                                        {cuenta.nombre} ({cuenta.tipo})
                                     </MenuItem>
                                 ))}
                             </Select>
