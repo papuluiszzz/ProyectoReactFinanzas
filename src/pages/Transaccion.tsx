@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import LogoutIcon from '@mui/icons-material/Logout';
 import TransactionForm from '../Components/TransaccionForm';
 import { useAuth } from '../Context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const TransaccionPage: React.FC = () => {
     const [categorias, setCategorias] = useState<any[]>([]);
     const [cuentas, setCuentas] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const { user, loading } = useAuth();
+    const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
+    const userName = user?.nombre || 'Usuario';
 
     useEffect(() => {
         // Si aún está cargando, no hacer nada
@@ -56,7 +59,7 @@ const TransaccionPage: React.FC = () => {
         };
 
         fetchData();
-    }, [user, loading, navigate]); // Cambiar dependencias
+    }, [user, loading, navigate]);
 
     const handleSubmit = async (transaccionData: any) => {
         try {
@@ -86,8 +89,8 @@ const TransaccionPage: React.FC = () => {
             const result = await response.json();
             alert('Transacción registrada exitosamente.');
             
-            // Opcional: limpiar el formulario o redirigir
-            // navigate('/transacciones');
+            // Redirigir al home después del éxito
+            navigate('/');
 
         } catch (error) {
             console.error('Error submitting transaction:', error);
@@ -95,12 +98,25 @@ const TransaccionPage: React.FC = () => {
         }
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     // Mostrar loading mientras se carga la autenticación
     if (loading) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-                <CircularProgress />
-                <Typography ml={2}>Cargando...</Typography>
+            <Box
+                sx={{
+                    width: '100vw',
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#ffffff',
+                }}
+            >
+                <CircularProgress size={60} sx={{ color: '#6366f1' }} />
             </Box>
         );
     }
@@ -108,15 +124,87 @@ const TransaccionPage: React.FC = () => {
     // Si hay error, mostrarlo
     if (error) {
         return (
-            <Box textAlign="center" mt={4}>
-                <Typography color="error" variant="h6">
-                    {error}
-                </Typography>
-                <Typography mt={2}>
-                    <button onClick={() => window.location.reload()}>
+            <Box
+                sx={{
+                    width: '100vw',
+                    minHeight: '100vh',
+                    backgroundColor: '#ffffff',
+                    padding: 0,
+                }}
+            >
+                {/* Navbar */}
+                <Box
+                    sx={{
+                        backgroundColor: 'white',
+                        borderBottom: '1px solid #e5e7eb',
+                        px: 4,
+                        py: 2,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}
+                         onClick={() => navigate('/')}>
+                        <AccountBalanceWalletIcon sx={{ fontSize: 32, color: '#6366f1' }} />
+                        <Typography variant="h6" fontWeight="700" sx={{ color: '#111827' }}>
+                            Finanzas Pro
+                        </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <Box sx={{ textAlign: 'right' }}>
+                            <Typography variant="body2" sx={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                                Usuario activo
+                            </Typography>
+                            <Typography variant="body1" fontWeight="600" sx={{ color: '#111827' }}>
+                                {userName}
+                            </Typography>
+                        </Box>
+                        
+                        <Button
+                            variant="outlined"
+                            startIcon={<LogoutIcon />}
+                            onClick={handleLogout}
+                            sx={{
+                                borderRadius: 2,
+                                px: 3,
+                                py: 1,
+                                fontSize: '0.875rem',
+                                borderColor: '#d1d5db',
+                                color: '#6b7280',
+                                textTransform: 'none',
+                                fontWeight: 500,
+                                '&:hover': {
+                                    borderColor: '#ef4444',
+                                    color: '#ef4444',
+                                    backgroundColor: '#fef2f2',
+                                }
+                            }}
+                        >
+                            Salir
+                        </Button>
+                    </Box>
+                </Box>
+
+                <Box sx={{ maxWidth: 1400, mx: 'auto', px: 4, py: 6, textAlign: 'center' }}>
+                    <Typography color="error" variant="h6" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                    <Button 
+                        variant="contained"
+                        onClick={() => window.location.reload()}
+                        sx={{
+                            backgroundColor: '#6366f1',
+                            '&:hover': { backgroundColor: '#5856eb' },
+                            textTransform: 'none',
+                            fontWeight: 600
+                        }}
+                    >
                         Intentar de nuevo
-                    </button>
-                </Typography>
+                    </Button>
+                </Box>
             </Box>
         );
     }
@@ -124,24 +212,97 @@ const TransaccionPage: React.FC = () => {
     // Si no hay usuario (ya se habría redirigido, pero por seguridad)
     if (!user) {
         return (
-            <Box textAlign="center" mt={4}>
-                <Typography>Redirigiendo al login...</Typography>
+            <Box
+                sx={{
+                    width: '100vw',
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#ffffff',
+                }}
+            >
+                <CircularProgress size={60} sx={{ color: '#6366f1' }} />
+                <Typography ml={2}>Redirigiendo al login...</Typography>
             </Box>
         );
     }
 
     return (
-        <Box maxWidth="md" mx="auto" p={3}>
-            <Typography variant="h4" gutterBottom>
-                Registrar Transacción
-            </Typography>
-            <TransactionForm 
-                onSubmit={handleSubmit} 
-                categorias={categorias || [] } 
-                cuentas={cuentas || [] }
-                idUsuario={user.idUsuario}
-            />
-        </Box>        
+        <Box
+            sx={{
+                width: '100vw',
+                minHeight: '100vh',
+                backgroundColor: '#ffffff',
+                padding: 0,
+            }}
+        >
+            {/* Header/Navbar superior */}
+            <Box
+                sx={{
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid #e5e7eb',
+                    px: 4,
+                    py: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)'
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, cursor: 'pointer' }}
+                     onClick={() => navigate('/')}>
+                    <AccountBalanceWalletIcon sx={{ fontSize: 32, color: '#6366f1' }} />
+                    <Typography variant="h6" fontWeight="700" sx={{ color: '#111827' }}>
+                        Finanzas Pro
+                    </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                    <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="body2" sx={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                            Usuario activo
+                        </Typography>
+                        <Typography variant="body1" fontWeight="600" sx={{ color: '#111827' }}>
+                            {userName}
+                        </Typography>
+                    </Box>
+                    
+                    <Button
+                        variant="outlined"
+                        startIcon={<LogoutIcon />}
+                        onClick={handleLogout}
+                        sx={{
+                            borderRadius: 2,
+                            px: 3,
+                            py: 1,
+                            fontSize: '0.875rem',
+                            borderColor: '#d1d5db',
+                            color: '#6b7280',
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            '&:hover': {
+                                borderColor: '#ef4444',
+                                color: '#ef4444',
+                                backgroundColor: '#fef2f2',
+                            }
+                        }}
+                    >
+                        Salir
+                    </Button>
+                </Box>
+            </Box>
+
+            {/* Contenido principal */}
+            <Box sx={{ maxWidth: 1400, mx: 'auto', px: 4, py: 6 }}>
+                <TransactionForm 
+                    onSubmit={handleSubmit} 
+                    categorias={categorias || []} 
+                    cuentas={cuentas || []}
+                    idUsuario={user.idUsuario}
+                />
+            </Box>
+        </Box>
     );
 };
 
