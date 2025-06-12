@@ -151,7 +151,7 @@ const CategoriaForm: React.FC<CategoriaFormProps> = ({
                 {!editMode && (
                     <>
                         <Alert severity="info" sx={{ mb: 3, borderRadius: 2 }}>
-                            <Typography variant="body2">
+                            <Typography variant="body2" color='black'>
                                 <strong>💡 Tip:</strong> Las categorías nuevas estarán disponibles para todos los usuarios. 
                                 Si ya existe una con el mismo nombre, podrás empezar a usarla automáticamente.
                             </Typography>
