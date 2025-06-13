@@ -6,6 +6,7 @@ import Categorias from './pages/Categorias'; // 🔄 CAMBIADO: Ahora apunta a ./
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 import TransaccionPage from './pages/Transaccion';
+import TransaccionesPage from './pages/TransaccionesPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = cargando
@@ -85,6 +86,11 @@ function App() {
           path='*' 
           element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
         />
+
+        <Route 
+  path='/transacciones' 
+  element={isAuthenticated ? <TransaccionesPage /> : <Navigate to="/login" replace />} 
+/>
       </Routes>
     </div>
   );
