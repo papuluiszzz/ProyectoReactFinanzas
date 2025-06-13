@@ -1,4 +1,4 @@
-// src/pages/TransaccionesPage.tsx
+// src/pages/TransaccionesPage.tsx - ACTUALIZADO CON BOTÓN DE EXPORTAR
 import React, { useState, useEffect } from 'react';
 import {
     Box,
@@ -38,6 +38,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import AddIcon from '@mui/icons-material/Add';
+
+// ✅ IMPORTAR EL COMPONENTE DE EXPORTACIÓN
+import ExportButtons from '../components/ExportButtons';
 
 interface Transaccion {
     idTransaccion: number;
@@ -281,19 +284,28 @@ const TransaccionesPage: React.FC = () => {
                             </Typography>
                         </Box>
                         
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={() => navigate('/transaccion')}
-                            sx={{
-                                backgroundColor: '#6366f1',
-                                '&:hover': { backgroundColor: '#5856eb' },
-                                borderRadius: 2, px: 4, py: 1.5,
-                                fontSize: '1rem', textTransform: 'none', fontWeight: 600
-                            }}
-                        >
-                            Nueva Transacción
-                        </Button>
+                        {/* ✅ BOTONES DE ACCIÓN CON EXPORTAR */}
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <ExportButtons 
+                                transacciones={transacciones}
+                                estadisticas={estadisticas}
+                                filtrosAplicados={filtros}
+                                totalRecords={pagination.totalRecords}
+                            />
+                            <Button
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                                onClick={() => navigate('/transaccion')}
+                                sx={{
+                                    backgroundColor: '#6366f1',
+                                    '&:hover': { backgroundColor: '#5856eb' },
+                                    borderRadius: 2, px: 4, py: 1.5,
+                                    fontSize: '1rem', textTransform: 'none', fontWeight: 600
+                                }}
+                            >
+                                Nueva Transacción
+                            </Button>
+                        </Box>
                     </Box>
 
                     {/* Estadísticas rápidas */}
@@ -532,12 +544,26 @@ const TransaccionesPage: React.FC = () => {
                 {/* Tabla de transacciones */}
                 <Card elevation={0} sx={{ border: '1px solid #e5e7eb', borderRadius: 3 }}>
                     <Box sx={{ p: 3, borderBottom: '1px solid #e5e7eb' }}>
-                        <Typography variant="h6" fontWeight="600" sx={{ color: '#111827' }}>
-                            Resultados de la Búsqueda
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#6b7280', mt: 1 }}>
-                            {pagination.totalRecords} transacciones encontradas
-                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                                <Typography variant="h6" fontWeight="600" sx={{ color: '#111827' }}>
+                                    Resultados de la Búsqueda
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#6b7280', mt: 1 }}>
+                                    {pagination.totalRecords} transacciones encontradas
+                                </Typography>
+                            </Box>
+                            
+                            {/* ✅ BOTÓN DE EXPORTAR TAMBIÉN EN LA TABLA */}
+                            {transacciones.length > 0 && (
+                                <ExportButtons 
+                                    transacciones={transacciones}
+                                    estadisticas={estadisticas}
+                                    filtrosAplicados={filtros}
+                                    totalRecords={pagination.totalRecords}
+                                />
+                            )}
+                        </Box>
                     </Box>
 
                     {loading ? (
