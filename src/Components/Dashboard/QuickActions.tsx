@@ -1,3 +1,4 @@
+// src/Components/Dashboard/QuickActions.tsx - ARCHIVO COMPLETO ACTUALIZADO
 import React from 'react';
 import { Grid, Card, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -5,6 +6,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import CategoryIcon from '@mui/icons-material/Category';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import HistoryIcon from '@mui/icons-material/History'; // ✅ NUEVA IMPORTACIÓN
 
 const QuickActions: React.FC = () => {
     const navigate = useNavigate();
@@ -16,26 +18,33 @@ const QuickActions: React.FC = () => {
             icon: MonetizationOnIcon,
             color: '#10b981',
             onClick: () => {
-                // TODO: Implementar formulario de ingreso
-                console.log('Navegando a agregar ingreso');
+                // TODO: Implementar formulario de ingreso directo
+                navigate('/transaccion');
             }
         },
         {
-            title: 'Registrar Gasto',
+            title: 'Registrador Gasto',
             description: 'Añade un nuevo gasto',
             icon: ReceiptIcon,
             color: '#ef4444',
             onClick: () => navigate('/transaccion')
         },
         {
-            title: 'Gestionar Categorías',
+            title: 'Ver Historial',  // ✅ NUEVA ACCIÓN
+            description: 'Consulta tus transacciones',
+            icon: HistoryIcon,
+            color: '#3b82f6',
+            onClick: () => navigate('/transacciones')
+        },
+        {
+            title: 'Categorías de gestión',
             description: 'Organiza tus categorías',
             icon: CategoryIcon,
             color: '#6366f1',
             onClick: () => navigate('/categorias')
         },
         {
-            title: 'Mis Cuentas',
+            title: 'Mis cuentas',
             description: 'Gestionar mis cuentas bancarias',
             icon: AccountBalanceIcon,
             color: '#8b5cf6',
@@ -56,7 +65,7 @@ const QuickActions: React.FC = () => {
             
             <Grid container spacing={3}>
                 {actions.map((action, index) => (
-                    <Grid item xs={12} sm={6} md={3} key={index}>
+                    <Grid item xs={12} sm={6} md={2.4} key={index}> {/* ✅ CAMBIADO A md={2.4} PARA 5 COLUMNAS */}
                         <Box 
                             onClick={action.onClick}
                             sx={{ 
@@ -68,7 +77,8 @@ const QuickActions: React.FC = () => {
                                 transition: 'all 0.2s ease',
                                 '&:hover': {
                                     backgroundColor: '#f3f4f6',
-                                    transform: 'translateY(-1px)'
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                                 }
                             }}
                         >
