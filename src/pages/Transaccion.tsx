@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography, Button } from '@mui/material';
+import { Box, CircularProgress, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import LogoutIcon from '@mui/icons-material/Logout';
+import WarningIcon from '@mui/icons-material/Warning';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TransactionForm from '../Components/TransaccionForm';
 import { useAuth } from '../Context/AuthContext';
 
@@ -11,6 +13,14 @@ const TransaccionPage: React.FC = () => {
     const [cuentas, setCuentas] = useState<any[]>([]);
     const [tiposTransaccion, setTiposTransaccion] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [resultDialog, setResultDialog] = useState({
+        open: false,
+        success: false,
+        title: '',
+        message: '',
+        details: '',
+        showAlert: false
+    });
     const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
     const userName = user?.nombre || 'Usuario';
@@ -55,6 +65,9 @@ const TransaccionPage: React.FC = () => {
                     throw new Error("Error al obtener tipos de transacción");
                 }
                 const tiposData = await tiposResponse.json();
+                
+                // ✅ AGREGAR ESTA LÍNEA AQUÍ
+                console.log('Tipos de transacción raw:', tiposData);
 
                 // Actualizar estados - CORREGIR extracción de arrays
                 setCategorias(categoriasData.success ? categoriasData.data : []);
@@ -90,20 +103,58 @@ const TransaccionPage: React.FC = () => {
                 })
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Error al registrar la transacción.");
+                throw new Error(result.msg || "Error al registrar la transacción.");
             }
 
-            const result = await response.json();
-            alert('Transacción registrada exitosamente.');
-            
-            // Redirigir al home después del éxito
-            navigate('/');
+            // ✅ MOSTRAR RESULTADO CON DIALOG PERSONALIZADO
+            if (result.success && result.data) {
+                const { saldoAnterior, saldoNuevo, cambio, porcentajeCambio, alertaBajadaSignificativa } = result.data;
+                
+                let details = `Saldo anterior: $${saldoAnterior.toLocaleString('es-CO')}\n`;
+                details += `Saldo actual: $${saldoNuevo.toLocaleString('es-CO')}\n`;
+                details += `Cambio: ${cambio > 0 ? '+' : ''}$${Math.abs(cambio).toLocaleString('es-CO')}`;
+
+                setResultDialog({
+                    open: true,
+                    success: true,
+                    title: alertaBajadaSignificativa ? '🚨 Transacción Registrada - ¡Alerta!' : '✅ Transacción Exitosa',
+                    message: alertaBajadaSignificativa 
+                        ? `Tu saldo ha disminuido más del 50% (${porcentajeCambio.toFixed(1)}%)`
+                        : 'Tu transacción ha sido procesada correctamente',
+                    details: details,
+                    showAlert: alertaBajadaSignificativa
+                });
+            } else {
+                setResultDialog({
+                    open: true,
+                    success: true,
+                    title: '✅ Transacción Exitosa',
+                    message: 'Tu transacción ha sido procesada correctamente',
+                    details: '',
+                    showAlert: false
+                });
+            }
 
         } catch (error) {
             console.error('Error submitting transaction:', error);
-            alert(error instanceof Error ? error.message : 'Error al registrar la transacción.');
+            setResultDialog({
+                open: true,
+                success: false,
+                title: '❌ Error en la Transacción',
+                message: error instanceof Error ? error.message : 'Error al registrar la transacción.',
+                details: '',
+                showAlert: false
+            });
+        }
+    };
+
+    const handleResultClose = () => {
+        setResultDialog({ ...resultDialog, open: false });
+        if (resultDialog.success) {
+            navigate('/');
         }
     };
 
@@ -312,6 +363,102 @@ const TransaccionPage: React.FC = () => {
                     idUsuario={user.idUsuario}
                 />
             </Box>
+
+            {/* Dialog de Resultado de Transacción */}
+            <Dialog 
+                open={resultDialog.open} 
+                onClose={handleResultClose}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                        border: `2px solid ${resultDialog.success ? '#22c55e' : '#ef4444'}`,
+                        backgroundColor: resultDialog.success ? '#f0fdf4' : '#fef2f2'
+                    }
+                }}
+            >
+                <DialogTitle sx={{ 
+                    textAlign: 'center', 
+                    pt: 3,
+                    pb: 1,
+                    color: resultDialog.success ? '#16a34a' : '#dc2626'
+                }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                        {resultDialog.showAlert ? (
+                            <WarningIcon sx={{ fontSize: 50, color: '#f59e0b' }} />
+                        ) : resultDialog.success ? (
+                            <CheckCircleIcon sx={{ fontSize: 50, color: '#22c55e' }} />
+                        ) : (
+                            <WarningIcon sx={{ fontSize: 50, color: '#ef4444' }} />
+                        )}
+                        <Typography variant="h5" fontWeight="700" sx={{ 
+                            color: resultDialog.showAlert ? '#d97706' : resultDialog.success ? '#16a34a' : '#dc2626' 
+                        }}>
+                            {resultDialog.title}
+                        </Typography>
+                    </Box>
+                </DialogTitle>
+                
+                <DialogContent sx={{ textAlign: 'center', pb: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                        mb: 2, 
+                        color: resultDialog.showAlert ? '#d97706' : resultDialog.success ? '#16a34a' : '#dc2626', 
+                        fontWeight: 500 
+                    }}>
+                        {resultDialog.message}
+                    </Typography>
+                    
+                    {resultDialog.details && (
+                        <Box sx={{ 
+                            backgroundColor: 'rgba(255,255,255,0.8)', 
+                            borderRadius: 2, 
+                            p: 2, 
+                            mt: 2,
+                            border: `1px solid ${resultDialog.success ? '#22c55e' : '#ef4444'}20`
+                        }}>
+                            <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                    color: '#374151', 
+                                    whiteSpace: 'pre-line',
+                                    fontFamily: 'monospace',
+                                    fontSize: '0.9rem'
+                                }}
+                            >
+                                {resultDialog.details}
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {resultDialog.showAlert && (
+                        <Alert severity="warning" sx={{ mt: 2, borderRadius: 2 }}>
+                            <Typography variant="body2" fontWeight="600">
+                                💡 Recomendación: Considera revisar tus gastos para mantener un balance saludable
+                            </Typography>
+                        </Alert>
+                    )}
+                </DialogContent>
+
+                <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+                    <Button
+                        onClick={handleResultClose}
+                        variant="contained"
+                        sx={{ 
+                            backgroundColor: resultDialog.success ? '#22c55e' : '#ef4444',
+                            color: 'white',
+                            px: 4,
+                            py: 1,
+                            fontWeight: 700,
+                            '&:hover': {
+                                backgroundColor: resultDialog.success ? '#16a34a' : '#dc2626'
+                            }
+                        }}
+                    >
+                        {resultDialog.success ? 'Ir al Dashboard' : 'Entendido'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

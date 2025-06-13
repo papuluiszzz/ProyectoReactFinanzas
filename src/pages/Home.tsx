@@ -14,6 +14,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import SavingsIcon from '@mui/icons-material/Savings';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import CategoryIcon from '@mui/icons-material/Category';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
@@ -100,8 +101,6 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
             </Box>
         );
     }
-
-    
 
     return (
         <Box
@@ -465,7 +464,7 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                 
                                 <Grid item xs={12} sm={6} md={3}>
                                     <Box 
-                                    onClick={() => navigate('/Transaccion')}
+                                    onClick={() => navigate('/transaccion')}
                                     sx={{ 
                                         p: 3, 
                                         borderRadius: 2, 
@@ -508,13 +507,15 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                             Gestionar Categorías
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                                            Organiza tus categorias 
+                                            Organiza tus categorías 
                                         </Typography>
                                     </Box>
                                 </Grid>
 
                                 <Grid item xs={12} sm={6} md={3}>
-                                    <Box sx={{ 
+                                    <Box 
+                                    onClick={() => navigate('/cuentas')}
+                                    sx={{ 
                                         p: 3, 
                                         borderRadius: 2, 
                                         backgroundColor: '#f9fafb',
@@ -526,12 +527,12 @@ const Home: React.FC<HomeProps> = ({ onLogout }) => {
                                             transform: 'translateY(-1px)'
                                         }
                                     }}>
-                                        <SavingsIcon sx={{ fontSize: 24, color: '#f59e0b', mb: 2 }} />
+                                        <AccountBalanceIcon sx={{ fontSize: 24, color: '#8b5cf6', mb: 2 }} />
                                         <Typography variant="body1" fontWeight="600" sx={{ color: '#111827', mb: 1 }}>
-                                            Definir Meta
+                                            Mis Cuentas
                                         </Typography>
                                         <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                                            Establece objetivos de ahorro
+                                            Gestionar mis cuentas bancarias
                                         </Typography>
                                     </Box>
                                 </Grid>

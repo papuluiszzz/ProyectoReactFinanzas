@@ -1,8 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'; // 🔄 QUITADO: BrowserRouter
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import Categorias from './pages/Categorias'; // 🔄 CAMBIADO: Ahora apunta a ./pages/Categorias/index.tsx
+import Categorias from './pages/Categorias';
+import CuentasPage from './pages/Cuentas';
 import { CircularProgress, Box } from '@mui/material';
 import './App.css';
 import TransaccionPage from './pages/Transaccion';
@@ -78,8 +79,12 @@ function App() {
           element={isAuthenticated ? <Categorias onLogout={updateAuth} /> : <Navigate to="/login" replace />} 
         />
         <Route 
+          path='/cuentas' 
+          element={isAuthenticated ? <CuentasPage /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
           path='/transaccion' 
-          element={<TransaccionPage />} 
+          element={isAuthenticated ? <TransaccionPage /> : <Navigate to="/login" replace />} 
         />
         <Route 
           path='*' 
